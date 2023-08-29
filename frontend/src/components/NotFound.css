@@ -1,0 +1,44 @@
+.page_404 {
+    padding: 40px;
+    background: #fff;
+    font-family: 'Arvo', serif;
+}
+
+.page_404 img {
+    width: 100%;
+}
+
+.four_zero_four_bg {
+    background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
+    height: 400px;
+    width: 1000px;
+    background-position: right;
+}
+
+.four_zero_four_bg h1 {
+    font-size: 80px;
+    margin-left: 150px;
+}
+
+.four_zero_four_bg h3 {
+    font-size: 80px;
+    margin-left: 150px;
+}
+
+.link_404 {
+    color: #fff !important;
+    margin-left: 200px;
+    padding: 10px 20px;
+    background: darkblue;
+    display: inline-block;
+}
+
+.content_box_404 {
+    margin-top: -50px;
+    margin-left: 170px;
+}
+
+.button {
+    margin-top: -10px;
+    margin-left: 10px;
+}

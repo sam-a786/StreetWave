@@ -1,0 +1,9 @@
+.idea/
+venv/
+node_modules/
+.env
+.vscode
+.vscode/
+__pycache__
+__pycache__/
+backend/geckodriver.log

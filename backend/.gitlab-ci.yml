@@ -1,0 +1,84 @@
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+
+stages:
+  - Test
+  - Build
+
+variables:
+  backend_dir: 'backend/backend'
+  DB_NAME: $DB_NAME
+  DB_USER_PASSWORD: $DB_USER_PASSWORD
+  DB_USER: $DB_USER
+  DB_HOST: $DB_HOST
+  DB_PORT: $DB_PORT
+
+default:
+  image: ubuntu:20.04
+
+  services:
+    - mysql:8.0
+
+  cache:
+    paths:
+      - ~/.cache/pip/
+
+  before_script:
+    - cd $backend_dir
+    - apt -y update
+    - apt -y install apt-utils
+    - DEBIAN_FRONTEND=noninteractive apt -y install tzdata
+    - apt -y install mysql-server
+    - apt -y install sudo
+    - sudo apt -y install firefox
+    - sudo service mysql start
+    - apt -y install net-tools python3.8 python3-pip mysql-client libmysqlclient-dev
+    - sudo apt-get install -y pkg-config
+    - sudo apt-get install -y libcairo2-dev libjpeg-dev libgif-dev
+    - pip3 freeze > requirements.txt
+    - pip3 install -r requirements.txt
+    - pip3 install virtualenv
+    - virtualenv -p python3 venv
+    - source venv/bin/activate
+    - pip3 install django
+    - pip3 install djangorestframework
+    - pip3 install mysqlclient
+    - pip3 install pymysql
+    - pip3 install python-decouple
+    - pip3 install python-dotenv
+    - pip3 install django-cors-headers
+    - pip3 install requests
+    - pip3 install selenium
+    - pip3 install beautifulsoup4
+    - pip3 install apscheduler
+    - pip3 install --upgrade djangorestframework-simplejwt
+
+test_job:
+  stage: Test
+  tags:
+    - comsc-ci
+  script:
+    - cd ..
+    - python3 manage.py test apps/
+
+build_job:
+  stage: Build
+  tags:
+    - comsc-ci
+  script:
+    - cd ../..
+    - mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS -e "CREATE DATABASE streetwave_db;"
+    - mysql -h$MYSQL_HOST -u$MYSQL_USER -p$MYSQL_PASS streetwave_db < database_schemas/streetwave_schema.sql
+
+
+    - cd $backend_dir
+    - cd ..
+    - python3 manage.py makemigrations
+    # faking scraping and stations so django does not try to create the tables once they have already been created
+    - python3 manage.py migrate --fake scraping
+    - python3 manage.py migrate --fake stations
+    - python3 manage.py migrate
+    - python3 manage.py check
+    - python3 manage.py collectstatic --noinput

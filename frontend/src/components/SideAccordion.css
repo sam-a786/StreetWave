@@ -1,0 +1,104 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#addressinputcontainer {
+    background-color: whitesmoke;
+    font-size: smaller;
+    width: 300px;
+    height: 100%;
+    max-width: 300px;
+}
+
+.textwhite {
+    color: white;
+    font-size: smaller;
+}
+
+.small {
+    font-size: small;
+}
+
+#scoreresultscontainer {
+    margin-left: 50px;
+    padding: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background-color: whitesmoke;
+    width:100%;
+}
+
+.results {
+    align-content: top;
+    vertical-align: top;
+    max-width: 260px;
+}
+
+.body {
+    padding-top: 0;
+}
+
+#maincontainer {
+    width: 90%
+}
+
+#scoreresultscontainer {
+    margin-left: 10px;
+    height: 100%;
+}
+
+.enteraddress {
+    background-color: lightcoral;
+    text-align: center;
+    height:fit-content;
+}
+
+.coverage {
+    background-color: lightcoral;
+}
+
+.underline {
+    text-decoration: underline;
+    max-height: fit-content;
+    background-color: lightgray;
+    width: fit-content;
+}
+
+.underline:hover {
+    background-color: lightskyblue;
+}
+
+.close {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    #maincontainer {
+        width: 100%
+    }
+    .underline {
+        margin-left: 0;
+    }
+    #scoreresultscontainer {
+        margin-left: 0;
+        margin-right: 3px;
+    }
+}
+
+.banner {
+    font-size: small;
+}
+
+.tooltipontop {
+    z-index: 999;
+}
+
+.legend-small {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.form-check-label {
+  font-size: 15px;
+}

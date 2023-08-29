@@ -1,0 +1,38 @@
+.image-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-gap: 20px;
+    width: 200px;
+    height: 150px;
+    
+}
+
+.image-container div {
+    overflow: hidden;
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-container img {
+    display: block;
+    margin: auto;
+}
+
+.top-left {
+    cursor: pointer;
+}
+
+.top-right {
+    cursor: pointer;
+}
+
+.bottom-right {
+    cursor: pointer;
+}
+
+.bottom-left {
+    cursor: pointer;
+}

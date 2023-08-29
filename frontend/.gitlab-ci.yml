@@ -1,0 +1,36 @@
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_BRANCH
+
+default:
+  image: node
+
+variables:
+  frontend_dir: 'frontend/'
+
+cache:
+  paths:
+    - frontend/node_modules/
+
+stages:
+  - Test
+  - Build
+
+test_job:
+  stage: Test
+  tags:
+    - comsc-ci
+  script:
+    - cd $frontend_dir
+    - npm install
+    - npm test
+
+build_job:
+  stage: Build
+  tags:
+    - comsc-ci
+  script:
+    - cd $frontend_dir
+    - npm install
+    - npm run build

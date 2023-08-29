@@ -1,0 +1,16 @@
+#passwordContainer {
+    padding: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background-color: #0A4987;
+    max-width: fit-content;
+}
+
+.textwhite {
+    color: white;
+}
+
+.back-to-login-link {
+    color: white;
+    font-size: 20px;
+}

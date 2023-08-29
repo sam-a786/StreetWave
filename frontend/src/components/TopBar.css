@@ -1,0 +1,101 @@
+#topbar {
+    background-color: #031835;
+    width:100%;
+}
+
+img {
+    height: 40px;
+}
+
+.navbutton {
+    font-size: large;
+}
+
+.containermargins {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 90%;
+}
+
+#logo1 {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    img {
+        height: 30px;
+    }
+
+    .navbutton {
+        font-size: small;
+    }
+
+    .containermargins {
+        width: 100%;
+    }
+
+    .navbar-nav {
+        justify-content: flex-end;
+    }
+
+    .nav-item {
+        width: 100%;
+        text-align: right;
+    }
+
+    .nav-item .navbutton {
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    #logo {
+        display: none;
+    }
+
+    #logo1 {
+        display: block;
+    }
+
+    .navbar-collapse {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        max-width: 80%;
+        padding: 10px 0;
+        padding-right: 10px;
+        background-color: #031835;
+        z-index: 2;
+    }
+
+    .nav-item .navbutton {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .nav-item:last-child .navbutton {
+        margin-bottom: 0;
+    }
+
+    .editprofilebutton {
+        width: auto;
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+}
+
+.middlebutton {
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.navbar-toggler-icon {
+  filter: invert(100%);
+}
+
+.navbar-container {
+    position: absolute;
+}

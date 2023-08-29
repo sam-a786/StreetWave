@@ -1,0 +1,89 @@
+stages:
+  - Frontend
+  - Backend
+  - Publish
+  - Deploy
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+
+# Branch rename
+variables:
+  # https://www.digitalocean.com/community/tutorials/how-to-set-up-a-continuous-deployment-pipeline-with-gitlab-ci-cd-on-ubuntu-18-04#prerequisites
+  TAG_LATEST: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+  TAG_COMMIT: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+  # See https://github.com/docker-library/docker/pull/166
+  DOCKER_TLS_CERTDIR: ""
+
+
+trigger_frontend:
+  stage: Frontend
+  trigger:
+    include: frontend/.gitlab-ci.yml
+    strategy: depend
+
+trigger_backend:
+  stage: Backend
+  trigger:
+    include: backend/.gitlab-ci.yml
+    strategy: depend
+
+
+trigger_publish:
+  stage: Publish
+  image: docker:stable
+  tags:
+    - deployment
+  services:
+    - name: docker:dind
+      entrypoint: [ "env", "-u", "DOCKER_HOST" ]
+      command: [ "dockerd-entrypoint.sh" ]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: always
+    - when: never
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker build -t $TAG_COMMIT -t $TAG_LATEST .
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - docker push $TAG_COMMIT
+    - docker push $TAG_LATEST
+
+
+#Note, if running deploy not in main or protected branch then this will only work if the variables used are un-protected
+#Also note, you need an ssh key for the user deployer in the runner. ssh key directories need permissions (700 for
+# .ssh and 600 for the authorized key file)
+
+# Forcing pipeline to run from the start
+
+## Note the commnad "sudo docker image prune --all --force" cleans all unused images on the server. Naturally, the
+## current image in use is not cleaned but all other images are. This is to ensure that the server does not run out of
+## disk space. This is a good practice to do on a regular basis.
+
+trigger_deploy:
+  stage: Deploy
+  image: alpine:latest
+  tags:
+    - deployment
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+      when: always
+    - when: never
+  script:
+    - chmod og= $RUNNER_ID_RSA
+    - apk update && apk add openssh-client
+    - ssh -i $RUNNER_ID_RSA -o StrictHostKeyChecking=no $RUNNER_SERVER_USER@$RUNNER_SERVER_IP "docker image prune --all --force"
+    - ssh -i $RUNNER_ID_RSA -o StrictHostKeyChecking=no $RUNNER_SERVER_USER@$RUNNER_SERVER_IP "docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY"
+    - ssh -i $RUNNER_ID_RSA -o StrictHostKeyChecking=no $RUNNER_SERVER_USER@$RUNNER_SERVER_IP "docker pull $TAG_COMMIT"
+    - ssh -i $RUNNER_ID_RSA -o StrictHostKeyChecking=no $RUNNER_SERVER_USER@$RUNNER_SERVER_IP "docker container rm -f streetwave-app || true"
+    - ssh -i $RUNNER_ID_RSA -o StrictHostKeyChecking=no $RUNNER_SERVER_USER@$RUNNER_SERVER_IP "docker run -d -p 8000:8000 --name streetwave-app $TAG_COMMIT"
+  environment:
+    name: production
+    url: http://10.72.100.68:8000

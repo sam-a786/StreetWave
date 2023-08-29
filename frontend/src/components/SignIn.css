@@ -1,0 +1,15 @@
+.card {
+    margin:10px;
+}
+
+#signincontainer {
+    padding: 10px;
+    padding-right: 20px;
+    padding-left: 20px;
+    background-color: #0A4987;
+    max-width: 300px;
+}
+  
+.textwhite {
+    color: white;
+}
